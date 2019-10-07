@@ -1,0 +1,14 @@
+---
+- hosts: myvmservers
+  become: yes
+  vars:
+   - mysql_new_root_pass: IamSoSecret
+   - wordpress_db: wordpress
+   - wordpress_user: wpuser
+   - wordpress_user_passwd: wpuserpwd
+  roles:
+   - php
+   - apache2
+   - mariadb
+   - wordpress
+#   - certbot

@@ -1,0 +1,60 @@
+---
+- name: install Utility software
+  apt:
+   name:
+     - python3-mysqldb
+   state: latest
+
+- name: install MariaDB
+  apt:
+   name: "{{ list_of_packages }}" 
+   state: present
+  vars:
+   list_of_packages:
+   - mariadb-server
+   - mariadb-client
+   - mariadb-common
+
+- name: start MariaDB
+  service: name=mariadb state=started enabled=yes
+
+- name: Check that the somefile.conf exists
+  stat:
+   path: /root/.my.cnf
+  register: stat_result
+- debug:
+   msg:
+    "/root.my.cnf does not exist, looks like an intitial DB installaiton. will now secure..."
+  when: stat_result.stat.exists == false
+
+- name: Remove anonymous users
+  mysql_user: name="" state=absent
+  when: stat_result.stat.exists == false
+
+- name: Remove test database
+  mysql_db: name=test state=absent
+  when: stat_result.stat.exists == false
+
+#- name: Update root password
+#  mysql_user:
+#   name: root
+#   password: "{{ mysql_new_root_pass }}"
+#   host: "{{ item.name }}"
+#  loop:
+#    - "{ name: ansible_hostname }"
+#    - { name: '127.0.0.1' }
+#    - { name: '::1' }
+#    - { name: 'localhost' }
+#  when: stat_result.stat.exists == false
+
+- name: Update root password
+  mysql_user: name=root host={{item}} password={{mysql_new_root_pass}}
+  with_items:
+   - "{{ ansible_hostname }}"
+   - 127.0.0.1
+   - ::1
+   - localhost
+  when: stat_result.stat.exists == false
+
+- name: Create my.cnf
+  template: src=my.cnf dest=/root/.my.cnf

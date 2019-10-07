@@ -1,0 +1,9 @@
+---
+- name: Add certbot repository
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+
+- name: Install Certbot's Apache package
+  apt:
+    name: python-certbot-apache
+    state: present

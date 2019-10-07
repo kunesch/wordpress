@@ -1,0 +1,9 @@
+[all:vars]
+ansible_user='ralph'           # Username for ssh connection
+ansible_become='yes'             # Run commands as root user?
+## ansible_become_pass='PasswordForVivekUser' # Password for sudo user i.e. ansible_user password
+ansible_become_method='sudo'     # How do I become root user? Use sudo.
+
+## my VMWare server running locally ##
+[myvmservers]
+192.168.237.134
