@@ -1,15 +1,4 @@
 ---
-- name: install PHP
-  apt:
-   name: "{{ list_of_packages }}"
-   state: latest
-   update_cache: yes
-  vars:
-   list_of_packages:
-     - php7.2
-     - php7.2-mysql
-     - libapache2-mod-php7.2
-     - php7.2-cli
-     - php7.2-cgi
-     - php7.2-gd
-
+- name: Import OS version dependend PHP package
+  include_tasks: "PHP_{{ ansible_distribution }}_{{ ansible_distribution_version }}.yml"
+  #import_tasks: "PHP_Ubuntu_19.04.yml"
