@@ -1,16 +1,7 @@
 ---
-- name: install Apache
-  apt:
-   name: "{{ list_of_packages }}" 
-   state: present
-  vars:
-   list_of_packages:
-     - apache2
-     - libapache2-mod-php7.2
+- import_tasks: apache_php_lib72.yml
+  when: ansible_distribution_version == "19.04"
 
-- name: start Apache
-  service: name=apache2 state=started enabled=yes
-
-- name: install Hello World PHP script
-  copy: src=index.php dest=/var/www/html/index.php mode=0664
+- import_tasks: apache_php_lib73.yml
+  when: ansible_distribution_version == "19.10"
 
