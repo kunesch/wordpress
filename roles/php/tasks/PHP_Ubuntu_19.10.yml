@@ -1,0 +1,15 @@
+---
+- name: install PHP
+  apt:
+   name: "{{ list_of_packages }}"
+   state: latest
+   update_cache: yes
+  vars:
+   list_of_packages:
+     - php7.3
+     - php7.3-mysql
+     - libapache2-mod-php7.3
+     - php7.3-cli
+     - php7.3-cgi
+     - php7.3-gd
+
