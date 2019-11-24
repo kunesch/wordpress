@@ -13,3 +13,19 @@
      - php7.2-cgi
      - php7.2-gd
 
+- name: set PHP post_max_size
+  become: yes
+  ini_file:
+    path: /etc/php/7.2/apache2/php.ini
+    section: PHP
+    option: post_max_size
+    value: 8M
+
+- name: set PHP upload_max_filesize
+  become: yes
+  ini_file:
+    path: /etc/php/7.2/apache2/php.ini
+    section: PHP
+    option: upload_max_filesize
+    value: 3M
+
