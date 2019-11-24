@@ -15,7 +15,9 @@
   mysql_user: name={{ wordpress_user }} host=localhost password={{ wordpress_user_passwd }} priv=wordpress.*:ALL state=present
 
 - name: create wp-config.php
-  template: src=wp-config.php dest=/var/www/html/wp-config.php
+  template:
+    src: wp-config.php
+    dest: /var/www/html/wp-config.php
   notify:
    - reload apache2
 
