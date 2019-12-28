@@ -6,7 +6,11 @@
    - wordpress_db: wordpress
    - wordpress_user: wpuser
    - wordpress_user_passwd: wpuserpwd
+   - apache_ssl_site: wordpress-ssl
+   - apache_server_admin: zkzko@hotmail.com
+   - DocumentRoot: /var/www/html
   roles:
+   - common
    - php
    - apache2
    - mariadb
