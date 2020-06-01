@@ -1,0 +1,36 @@
+---
+- name: install PHP
+  apt:
+   name: "{{ list_of_packages }}"
+   state: latest
+   update_cache: yes
+  vars:
+   list_of_packages:
+     - php7.4
+     - php7.4-mysql
+     - libapache2-mod-php7.4
+     - php7.4-cli
+     - php7.4-cgi
+     - php7.4-gd
+     - php7.4-curl
+     - php7.4-xml
+     - php7.4-mbstring
+     - php7.4-zip
+     - php-imagick
+
+- name: set PHP post_max_size
+  become: yes
+  ini_file:
+    path: /etc/php/7.4/apache2/php.ini
+    section: PHP
+    option: post_max_size
+    value: 8M
+
+- name: set PHP upload_max_filesize
+  become: yes
+  ini_file:
+    path: /etc/php/7.4/apache2/php.ini
+    section: PHP
+    option: upload_max_filesize
+    value: 3M
+

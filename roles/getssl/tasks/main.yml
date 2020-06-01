@@ -1,0 +1,71 @@
+---
+- name: Create /etc/getssl directory
+  file: path=/etc/getssl state=directory
+
+- name: Download getssl
+  get_url:
+    url: https://raw.githubusercontent.com/srvrco/getssl/master/getssl
+    dest: /etc/getssl/
+    mode: '0700'
+    owner: root
+    group: root
+
+- name: Create {{ LetsencryptDir }} directory
+  file: path="{{ LetsencryptDir }}" state=directory
+
+- name: Create /root/.getssl directory
+  file: path=/root/.getssl state=directory
+
+- name: Create /root/.getssl/{{ DomName }} directory
+  file: path=/root/.getssl/{{ DomName }} state=directory
+
+- name: copy locally created files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+     - {src: getssl.cfg, dest: /root/.getssl/getssl.cfg}
+
+- name: copy /root/.getssl/{{ DomName }}/getssl.cfg
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    force: yes
+  with_items:
+     - {src: getssl.cfg, dest: "/root/.getssl/{{ DomName }}/getssl.cfg"}
+
+- name: copy locally created files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+     - {src: letsencrypt.conf, dest: /etc/apache2/conf-available/letsencrypt.conf}
+
+- name: a2econf letsencrypt.conf
+  command: a2enconf letsencrypt
+  args:
+    creates: /etc/apache2/conf-enabled/letsencrypt.conf
+  notify:
+  - restart apache2
+
+# - name: Configure wordpress-ssl.conf to use letsencrypt key
+#   lineinfile:
+#     path: /etc/apache2/sites-enabled/wordpress-ssl.conf
+#     regexp: 'SSLCertificateFile'
+#     line: SSLCertificateFile {{ DomName }}.key
+- name: Configure wordpress-ssl.conf to use letsencrypt key
+  lineinfile:
+    path: /etc/apache2/sites-enabled/wordpress-ssl.conf
+    backrefs: "yes"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - {regexp: '(.*)SSLCertificateFile(.*)/etc/ssl', line: '\1SSLCertificateFile /etc/ssl/{{ DomName }}.crt'}
+    - {regexp: '(.*)SSLCertificateKeyFile(.*)/etc/ssl', line: '\1SSLCertificateKeyFile /etc/ssl/{{ DomName }}.key'}
+    - {regexp: '(.*)#SSLCertificateChainFile(.*)/etc/apache2', line: '\1SSLCertificateChainFile /etc/ssl/chain.crt'}
