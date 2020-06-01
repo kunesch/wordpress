@@ -5,6 +5,9 @@
 - import_tasks: apache_php_lib73.yml
   when: ansible_distribution_version == "19.10"
 
+- import_tasks: apache_php_lib74.yml
+  when: ansible_distribution_version == "20.04"
+
 - name: copy locally created files
   copy:
     src: "{{ item.src }}"
@@ -14,6 +17,7 @@
     mode: 0644
   with_items:  
      - {src: dir.conf, dest: /etc/apache2/mods-available/dir.conf}
+     - {src: ssl.conf, dest: /etc/apache2/mods-available/ssl.conf}
      - {src: .htaccess, dest: "{{ DocumentRoot }}/.htaccess"}
   notify:
   - restart apache2
@@ -32,6 +36,7 @@
   with_items:
     - ssl
     - rewrite
+    - headers
 
 - name: a2ensite {{ apache_ssl_site }}
   command: a2ensite {{ apache_ssl_site }}

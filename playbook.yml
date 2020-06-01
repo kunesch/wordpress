@@ -1,5 +1,5 @@
 ---
-- hosts: myvmservers
+- hosts: azure
   become: yes
   vars:
    - mysql_new_root_pass: IamSoSecret
@@ -9,10 +9,12 @@
    - apache_ssl_site: wordpress-ssl
    - apache_server_admin: zkzko@hotmail.com
    - DocumentRoot: /var/www/html
+   - LetsencryptDir: /var/www/letsencrypt/.well-known/acme-challenge
+   - DomName: u2004.delatia.ch
   roles:
    - common
    - php
    - apache2
    - mariadb
    - wordpress
-#   - certbot
+   - getssl
